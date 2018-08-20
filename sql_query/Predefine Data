@@ -1,0 +1,62 @@
+﻿-- TIPE PERUSAHAAN
+
+SELECT master_company_type_translations.name, AVG(work_experiences.monthly_salary) 
+FROM (work_experiences 
+JOIN master_company_type_translations 
+ON master_company_type_translations.master_company_type_id = work_experiences.company_type_id)
+WHERE master_company_type_translations.locale = 'id'
+GROUP BY master_company_type_translations.name;
+
+
+-- PENDIDIKAN
+SELECT activehash_degrees.degree, AVG(max_salary) FROM (
+SELECT educations.user_id,MAX(educations.degree_id) as max_degree,
+MAX(work_experiences.monthly_salary) as max_salary
+FROM (educations JOIN work_experiences
+ON educations.user_id = work_experiences.user_id)
+WHERE work_experiences.monthly_salary is not null
+GROUP BY educations.user_id
+ORDER BY educations.user_id
+LIMIT 100) subquery1
+JOIN activehash_degrees ON activehash_degrees.id = subquery1.max_degree
+GROUP BY activehash_degrees.degree;
+
+
+SELECT activehash_degrees.degree, AVG(  work_experiences.monthly_salary) 
+FROM (((
+SELECT educations.user_id,MAX(educations.degree_id) as max_degree
+FROM educations 
+GROUP BY educations.user_id) edu JOIN work_experiences 
+ON edu.user_id = work_experiences.user_id)
+JOIN activehash_degrees ON activehash_degrees.id = edu.max_degree)
+WHERE work_experiences.monthly_salary is not null
+GROUP BY activehash_degrees.degree;
+
+-- Locations
+
+-- TIPE INDUSTRI
+SELECT name,AVG(monthly_salary) FROM work_experiences 
+JOIN master_industry_translations
+ON master_industry_translations.master_industry_id = work_experiences.industry_id
+WHERE locale = 'id'
+GROUP BY name
+ORDER BY name;
+
+
+-- KATEGORI PEKERJAAN
+
+SELECT name,AVG(monthly_salary) FROM work_experiences
+JOIN master_job_category_translations
+ON work_experiences.job_category_id = master_job_category_translations.master_job_category_id
+WHERE locale='id'
+GROUP BY name
+ORDER BY name;
+
+
+-- JENJANG KARIR
+SELECT activehash_job_levels.job_level, AVG(monthly_salary)
+FROM (work_experiences 
+JOIN activehash_job_levels 
+ON activehash_job_levels.id = work_experiences.job_level_id)
+GROUP BY activehash_job_levels.job_level
+LIMIT 100;

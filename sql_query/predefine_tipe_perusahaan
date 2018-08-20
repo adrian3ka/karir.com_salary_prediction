@@ -1,0 +1,12 @@
+SELECT name, avg(monthly_salary) FROM(
+select master_company_type_translations.name, work_experiences.monthly_salary
+FROM (work_experiences 
+JOIN master_company_type_translations 
+ON master_company_type_translations.master_company_type_id = work_experiences.company_type_id)
+WHERE master_company_type_translations.locale = 'id'
+UNION
+SELECT 'Lokal/Nasional', salary_upper + salary_lower / 2 
+FROM opportunities
+WHERE salary_upper + salary_lower / 2  > 1000000
+) X
+GROUP BY name;

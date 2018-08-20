@@ -1,0 +1,28 @@
+SELECT
+'Lokal/Nasional',
+activehash_degrees.degree,
+master_location_translations.name,
+master_industry_translations.name,
+master_job_category_translations.name,
+activehash_job_levels.job_level,
+opportunities.work_experience_in_months/12,
+(salary_lower + salary_upper) / 2,
+opportunities.gsource
+FROM ((((((opportunities
+JOIN master_job_functions ON opportunities.job_function_id = master_job_functions.id)
+JOIN activehash_degrees ON activehash_degrees.id = opportunities.degree_id)
+JOIN  master_location_translations ON opportunities.location_id = master_location_translations.master_location_id )
+JOIN master_industry_translations ON opportunities.industry_id = master_industry_translations.id )
+JOIN master_job_category_translations ON master_job_category_translations.master_job_category_id = master_job_functions.master_job_category_id)
+JOIN activehash_job_levels ON activehash_job_levels.id = opportunities.job_level_ids[1])
+WHERE opportunities.degree_id is not null and
+opportunities.location_id is not null and
+opportunities.industry_id is not null and
+master_job_functions.master_job_category_id IS NOT NULL
+AND opportunities.job_level_ids[1] IS NOT NULL
+AND opportunities.work_experience_in_months/12 IS NOT NULL
+AND (salary_lower + salary_upper) / 2 is not null
+AND master_location_translations.locale = 'id'
+AND master_industry_translations.locale = 'id'
+AND master_job_category_translations.locale = 'id';
+

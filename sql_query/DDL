@@ -1,0 +1,41 @@
+CREATE DATABASE IF NOT EXISTS QML;
+USE QML;
+DROP TABLE IF EXISTS Salary_RawData; 
+CREATE TABLE IF NOT EXISTS Salary_RawData (
+    id int NOT NULL AUTO_INCREMENT,
+    tipe_perusahaan varchar(255) NOT NULL,
+    pendidikan_terakhir varchar(255) NOT NULL,
+    lokasi varchar(255) NOT NULL,
+    tipe_industri varchar(255) NOT NULL,
+    kategori_pekerjaan varchar(255) NOT NULL,   
+    jenjang_karir varchar(255) NOT NULL,
+    pengalaman_kerja float NOT NULL,
+    salary bigint NOT NULL,
+    gsource varchar(20) NOT NULL,
+    PRIMARY KEY (ID)
+);
+DROP TABLE IF EXISTS Salary_PredefinedData; 
+CREATE TABLE Salary_PredefinedData (
+    id INT NOT NULL AUTO_INCREMENT,
+    versi varchar(255) NOT NULL,
+    tipe varchar(255) NOT NULL,
+    kunci varchar(255) NOT NULL,
+    nilai float NOT NULL,
+    PRIMARY KEY (id)
+);
+DROP TABLE IF EXISTS Salary_Formula;
+CREATE TABLE Salary_Formula (
+    id INT NOT NULL AUTO_INCREMENT,
+    versi varchar(255) NOT NULL,
+    infix LONGTEXT NOT NULL,
+    postfix LONGTEXT NOT NULL,
+    PRIMARY KEY (id)
+);
+DROP TABLE IF EXISTS Salary_Weighting; 
+CREATE TABLE Salary_Weighting (
+    id INT NOT NULL AUTO_INCREMENT,
+    versi varchar(255) NOT NULL,
+    kunci varchar(255) NOT NULL,
+    nilai float NOT NULL,
+    PRIMARY KEY (id)
+);

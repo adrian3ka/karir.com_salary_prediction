@@ -1,0 +1,15 @@
+SELECT name,avg(monthly_salary) FROM (
+select name,monthly_salary FROM work_experiences 
+JOIN master_industry_translations
+ON master_industry_translations.master_industry_id = work_experiences.industry_id
+WHERE locale = 'id'
+UNION 
+select name , salary_upper + salary_lower / 2
+from (opportunities
+JOIN master_industry_translations
+ON master_industry_translations.master_industry_id = opportunities.industry_id)
+WHERE locale = 'id'
+) X 
+WHERE monthly_salary > 1000000
+GROUP BY name;
+

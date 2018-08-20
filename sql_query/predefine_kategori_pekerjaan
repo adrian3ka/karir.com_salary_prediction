@@ -1,0 +1,19 @@
+select name, avg(salary) FROM
+(select name AS name,
+monthly_salary as salary
+FROM work_experiences
+JOIN master_job_category_translations
+ON work_experiences.job_category_id = master_job_category_translations.master_job_category_id
+WHERE locale='id'
+UNION 
+SELECT name as name,
+salary_upper + salary_lower / 2 as salary
+FROM ((opportunities
+JOIN master_job_functions ON master_job_functions.id = opportunities.job_function_ids[1])
+JOIN master_job_category_translations 
+ON master_job_category_translations.master_job_category_id = master_job_functions.master_job_category_id)
+WHERE locale='id'
+) X
+WHERE salary > 1000000
+GROUP BY name;
+

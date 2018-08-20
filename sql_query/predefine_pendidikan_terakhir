@@ -1,0 +1,17 @@
+SELECT degree, avg(monthly_salary) FROM (
+select activehash_degrees.degree, work_experiences.monthly_salary
+FROM (((
+SELECT educations.user_id,MAX(educations.degree_id) as max_degree
+FROM educations 
+GROUP BY educations.user_id) edu JOIN work_experiences 
+ON edu.user_id = work_experiences.user_id)
+JOIN activehash_degrees ON activehash_degrees.id = edu.max_degree)
+WHERE work_experiences.monthly_salary is not null
+UNION
+SELECT activehash_degrees.degree, salary_upper + salary_lower / 2 
+FROM (opportunities 
+JOIN activehash_degrees ON activehash_degrees.id = degree_ids[1]) 
+) X
+WHERE monthly_salary > 1000000
+GROUP BY degree;
+

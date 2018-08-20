@@ -1,0 +1,14 @@
+select job_level, AVG(monthly_salary) FROM 
+(select activehash_job_levels.job_level, monthly_salary
+FROM (work_experiences 
+JOIN activehash_job_levels 
+ON activehash_job_levels.id = work_experiences.job_level_id)
+WHERE monthly_salary is not null
+UNION
+SELECT activehash_job_levels.job_level, salary_lower+salary_upper/2
+FROM (opportunities 
+JOIN activehash_job_levels ON activehash_job_levels.id = opportunities.job_level_ids[1])
+WHERE salary_lower is not null and
+salary_upper is not null) x
+GROUP BY job_level;
+

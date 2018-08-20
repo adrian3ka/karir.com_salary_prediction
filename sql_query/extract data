@@ -1,0 +1,50 @@
+SELECT 
+master_company_type_translations.name, 
+activehash_degrees.degree,
+master_location_translations.name,
+master_industry_translations.name,
+master_job_category_translations.name,
+activehash_job_levels.job_level,
+duration, salary, users.gsource
+FROM
+((((((((
+SELECT user_id,company_type_id,MAX(degree_id) AS degree_id,location_id,industry_id,job_category_id,job_level_id,MAX(duration) AS duration, MAX(monthly_salary) as salary FROM(
+SELECT 
+work_experiences.user_id,
+work_experiences.company_type_id,
+educations.degree_id,
+work_experiences.location_id,
+work_experiences.industry_id,
+work_experiences.job_category_id,
+work_experiences.job_level_id,
+work_experiences.end_date,work_experiences.start_date,
+date_part('year',age(work_experiences.end_date,work_experiences.start_date))+
+date_part('month',age(work_experiences.end_date,work_experiences.start_date))/12+
+date_part('day',age(work_experiences.end_date,work_experiences.start_date))/365 AS duration,
+work_experiences.monthly_salary
+FROM (work_experiences JOIN educations 
+ON work_experiences.user_id = educations.user_id) 
+WHERE work_experiences.company_type_id IS NOT NULL
+AND work_experiences.location_id IS NOT NULL
+AND work_experiences.industry_id IS NOT NULL
+AND educations.degree_id IS NOT NULL
+AND work_experiences.job_category_id IS NOT NULL
+AND work_experiences.job_level_id IS NOT NULL
+ORDER BY work_experiences.user_id
+) x
+WHERE x.duration is not null
+AND x.duration > 0
+GROUP BY user_id,company_type_id,location_id,industry_id,job_category_id,job_level_id) 
+aggregate JOIN master_company_type_translations ON master_company_type_translations.master_company_type_id = company_type_id)
+JOIN activehash_degrees ON activehash_degrees.id = degree_id)
+JOIN  master_location_translations ON master_location_translations.master_location_id = location_id )
+JOIN master_industry_translations ON master_industry_translations.master_industry_id = industry_id)
+JOIN master_job_category_translations ON master_job_category_translations.master_job_category_id = job_category_id)
+JOIN activehash_job_levels ON activehash_job_levels.id = job_level_id)
+JOIN users ON users.id = user_id)
+WHERE master_company_type_translations.locale = 'id'
+AND master_location_translations.locale = 'id'
+AND master_industry_translations.locale = 'id'
+AND master_job_category_translations.locale = 'id'
+AND salary is not null;
+

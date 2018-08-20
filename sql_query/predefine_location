@@ -1,0 +1,17 @@
+select name,AVG(monthly_salary) FROM 
+(select master_location_translations.name, monthly_salary
+FROM (work_experiences
+JOIN master_location_translations ON master_location_translations.master_location_id = work_experiences.location_id)
+WHERE location_id is not null and
+monthly_salary is not null and
+locale = 'id'
+UNION
+SELECT master_location_translations.name, salary_upper+salary_lower / 2
+FROM (opportunities
+JOIN master_location_translations ON master_location_translations.master_location_id = opportunities.location_id)
+WHERE locale = 'id' and
+location_id is not null and
+salary_upper is not null and
+salary_lower is not null) x
+GROUP BY name;
+
